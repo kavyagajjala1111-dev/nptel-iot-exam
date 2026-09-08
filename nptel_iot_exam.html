@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NPTEL 2026 - Internet of Things Exam</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --accent:#38bdf8;
+    --accent2:#22d3ee;
+    --text:#e2e8f0;
+    --muted:#94a3b8;
+    --good:#22c55e;
+    --bad:#ef4444;
+    --gold:#fbbf24;
+    --silver:#cbd5e1;
+    --bronze:#d97706;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI',Roboto,Arial,sans-serif;
+    background:linear-gradient(135deg,#0f172a,#1e3a5f);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:24px;
+  }
+  .wrap{width:100%;max-width:720px;}
+  .card{
+    background:var(--card);
+    border-radius:16px;
+    padding:28px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    margin-bottom:20px;
+    border:1px solid rgba(255,255,255,0.06);
+  }
+  h1{font-size:22px;margin:0 0 6px 0;color:var(--accent2);}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:20px;}
+  label{display:block;margin-bottom:6px;font-size:14px;color:var(--muted);}
+  input[type=text],input[type=password]{
+    width:100%;padding:12px 14px;border-radius:10px;border:1px solid #334155;
+    background:#0f172a;color:var(--text);font-size:15px;margin-bottom:16px;
+  }
+  input:focus{outline:2px solid var(--accent);}
+  button{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#0f172a;border:none;padding:13px 22px;border-radius:10px;
+    font-weight:700;font-size:15px;cursor:pointer;width:100%;
+  }
+  button:disabled{opacity:0.5;cursor:not-allowed;}
+  button:hover:not(:disabled){filter:brightness(1.08);}
+  .error{color:var(--bad);font-size:13px;margin:-8px 0 14px 0;min-height:16px;}
+  .q{background:#0f172a;border-radius:12px;padding:18px;margin-bottom:14px;border:1px solid #334155;}
+  .q-title{font-weight:600;margin-bottom:12px;font-size:15px;}
+  .opt{
+    display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;
+    margin-bottom:8px;cursor:pointer;border:1px solid #334155;transition:0.15s;
+  }
+  .opt:hover{border-color:var(--accent);}
+  .opt.selected{border-color:var(--accent);background:rgba(56,189,248,0.12);}
+  .progress-bar{height:8px;background:#334155;border-radius:6px;overflow:hidden;margin-bottom:20px;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.3s;}
+  .timer{font-weight:700;color:var(--accent2);font-size:14px;}
+  .top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .score-big{font-size:46px;font-weight:800;color:var(--accent2);text-align:center;margin:10px 0;}
+  .score-sub{text-align:center;color:var(--muted);margin-bottom:20px;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th,td{padding:10px 8px;text-align:left;border-bottom:1px solid #334155;}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;}
+  .rank-cell{font-weight:700;width:40px;}
+  .you{background:rgba(56,189,248,0.1);}
+  .podium{display:flex;gap:10px;justify-content:center;align-items:flex-end;margin:20px 0 10px 0;}
+  .pod{text-align:center;padding:14px 10px;border-radius:10px 10px 0 0;color:#0f172a;font-weight:700;min-width:90px;}
+  .pod .name{font-size:13px;margin-bottom:4px;color:#0f172a;word-break:break-word;}
+  .pod .pts{font-size:12px;}
+  .p1{background:var(--gold);height:110px;}
+  .p2{background:var(--silver);height:85px;}
+  .p3{background:var(--bronze);height:65px;}
+  .loading{text-align:center;color:var(--muted);padding:20px;}
+  .hidden{display:none;}
+  .badge{display:inline-block;background:rgba(56,189,248,0.15);color:var(--accent2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+  .stat-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+  .stat-box{flex:1;min-width:110px;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px;text-align:center;}
+  .stat-box .num{font-size:22px;font-weight:800;color:var(--accent2);}
+  .stat-box .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;margin-top:2px;}
+  .pending-list{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--muted);}
+  .pending-list .lbl{color:var(--accent2);font-weight:700;font-size:12px;text-transform:uppercase;margin-bottom:6px;display:block;}
+  .refresh-note{color:var(--muted);font-size:12px;text-align:center;margin-top:10px;}
+  a.link-btn{display:block;text-align:center;color:var(--accent2);margin-top:10px;cursor:pointer;font-size:13px;}
+  .conn-warn{background:rgba(239,68,68,0.15);border:1px solid var(--bad);color:#fecaca;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="screen-passcode" class="card">
+    <h1>NPTEL 2026 — Internet of Things</h1>
+    <div class="sub">Enter the exam passcode given by your instructor to begin.</div>
+    <label>Passcode</label>
+    <input type="password" id="passcodeInput" placeholder="Enter passcode">
+    <div class="error" id="passErr"></div>
+    <button onclick="checkPasscode()">Enter Exam</button>
+  </div>
+
+  <div id="screen-name" class="card hidden">
+    <h1>Enter Your Details</h1>
+    <div class="sub">This name will appear on the leaderboard.</div>
+    <label>Full Name</label>
+    <input type="text" id="nameInput" placeholder="e.g. Ramesh Kumar" maxlength="40">
+    <div class="error" id="nameErr"></div>
+    <button onclick="startExam()">Start Exam</button>
+  </div>
+
+  <div id="screen-exam" class="card hidden">
+    <div class="top-row">
+      <span class="badge" id="qCounter">Question 1</span>
+      <span class="timer" id="timerDisplay">20:00</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div id="questionArea"></div>
+    <button onclick="nextQuestion()" id="nextBtn">Next</button>
+  </div>
+
+  <div id="screen-result" class="card hidden">
+    <h1 style="text-align:center;">Exam Submitted</h1>
+    <div class="score-big" id="finalScore">0/0</div>
+    <div class="score-sub" id="finalPercent"></div>
+    <div class="refresh-note">Your result has been recorded on the live leaderboard below.</div>
+  </div>
+
+  <div id="screen-leaderboard" class="card hidden">
+    <div class="top-row">
+      <h1 style="margin:0;">Live Leaderboard</h1>
+      <a class="link-btn" onclick="loadLeaderboard()" style="margin:0;">↻ Refresh</a>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box"><div class="num" id="statStarted">0</div><div class="lbl">Started Exam</div></div>
+      <div class="stat-box"><div class="num" id="statCompleted">0</div><div class="lbl">Completed</div></div>
+      <div class="stat-box"><div class="num" id="statPending">0</div><div class="lbl">Not Completed Yet</div></div>
+    </div>
+
+    <div class="pending-list hidden" id="pendingBox">
+      <span class="lbl">Not completed yet</span>
+      <span id="pendingNames"></span>
+    </div>
+
+    <div id="podiumArea"></div>
+    <table id="lbTable">
+      <thead><tr><th>Rank</th><th>Name</th><th>Score</th><th>Time</th></tr></thead>
+      <tbody id="lbBody"></tbody>
+    </table>
+    <div class="loading hidden" id="lbLoading">Loading...</div>
+  </div>
+
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+const PASSCODE = "879020";
+// Firebase Realtime Database URL (no trailing slash)
+const FIREBASE_DB_URL = "https://nptl-c195c-default-rtdb.firebaseio.com";
+const QUESTIONS_PER_ATTEMPT = 30;
+const SECONDS_PER_QUESTION = 40; // total timer = 30 x 40 = 1200s (20 min)
+/* ============================================ */
+
+const QUESTION_POOL = [
+  {q:"What does IoT stand for?", opts:["Internet of Tasks","Internet of Things","Interface of Things","Integration of Things"], correct:1},
+  {q:"Which of the following are commonly cited as enablers of IoT?", opts:["RFID, Sensors and Nanotechnology","Only RFID","Only Sensors","None of these"], correct:0},
+  {q:"Which of the following is NOT typically listed as a characteristic of IoT?", opts:["Efficient, scalable architecture","Ambiguous naming and addressing","Abundance of sleeping/mobile nodes","Interconnectivity of devices"], correct:1},
+  {q:"In the IoT reference architecture, which layer is responsible for sensing physical parameters?", opts:["Application layer","Perception/Physical layer","Business layer","Transport layer"], correct:1},
+  {q:"Which protocol is a lightweight publish-subscribe messaging protocol widely used in IoT?", opts:["MQTT","FTP","SMTP","Telnet"], correct:0},
+  {q:"CoAP is designed to work primarily over which transport protocol?", opts:["TCP","UDP","SCTP","ICMP"], correct:1},
+  {q:"Which of these is an example of a Low Power Wide Area Network (LPWAN) technology?", opts:["LoRaWAN","Bluetooth Classic","USB","Ethernet"], correct:0},
+  {q:"Zigbee networks are primarily designed for:", opts:["High-bandwidth video streaming","Low-power, low-data-rate communication","Wired backbone networking","Satellite links"], correct:1},
+  {q:"Which addressing scheme is preferred for IoT due to its vastly larger address space?", opts:["IPv4","IPv6","MAC-only addressing","No addressing needed"], correct:1},
+  {q:"6LoWPAN is used to enable IPv6 communication over which type of network?", opts:["Fiber optic backbone","Low-power wireless personal area networks","4G cellular core","Satellite uplinks"], correct:1},
+  {q:"An IoT gateway's primary function is to:", opts:["Bridge sensor networks to the internet/cloud","Generate electrical power","Render 3D graphics","Print documents"], correct:0},
+  {q:"Which of the following best defines 'edge computing' in an IoT context?", opts:["Processing data only in a centralized cloud","Processing data near the source of generation","Storing data on paper records","Deleting sensor data automatically"], correct:1},
+  {q:"'Fog computing' can best be described as:", opts:["An intermediate computing layer between edge devices and the cloud","A weather monitoring sensor","A type of database query language","A wired-only communication protocol"], correct:0},
+  {q:"RFID technology primarily enables:", opts:["Automatic identification and tracking of objects","High-definition video calls","Large-scale data storage","3D printing"], correct:0},
+  {q:"An RFID system typically consists of a reader and:", opts:["A tag/transponder","A keyboard","A monitor","A printer"], correct:0},
+  {q:"A Wireless Sensor Network (WSN) is best described as:", opts:["A network of distributed autonomous sensor nodes","A single powerful mainframe","A wired telephone exchange","A satellite constellation only"], correct:0},
+  {q:"Which WSN topology connects all nodes directly to a central coordinator?", opts:["Star topology","Ring topology only","Bus topology only","No topology"], correct:0},
+  {q:"NFC (Near Field Communication) typically operates over a range of about:", opts:["A few centimeters","Several kilometers","Hundreds of meters","Global range"], correct:0},
+  {q:"Bluetooth Low Energy (BLE) is primarily suited for:", opts:["Long-range satellite communication","Short-range, low-power device communication","High-voltage industrial motors","Fiber-optic backbone links"], correct:1},
+  {q:"Which of the following is an example of a single-board computer commonly used for IoT prototyping?", opts:["Raspberry Pi","Microsoft Excel","Adobe Photoshop","Google Chrome"], correct:0},
+  {q:"An 'actuator' in an IoT system is a device that:", opts:["Only senses environmental data","Converts a control signal into physical action","Only stores historical data","Only encrypts messages"], correct:1},
+  {q:"Which of the following is generally NOT considered a typical IoT application domain?", opts:["Smart home automation","Smart agriculture","Wearable health monitoring","Manual paper-based filing"], correct:3},
+  {q:"HTTP, compared to protocols like MQTT/CoAP, is generally considered for constrained IoT devices to be:", opts:["Lighter weight","Heavier / less efficient","Not usable at all","Faster in every case"], correct:1},
+  {q:"Which of the following is a major security challenge specific to IoT devices?", opts:["Limited processing power for strong encryption","Unlimited storage capacity","Excessive battery life","Too many wired ports"], correct:0},
+  {q:"Which of these operating systems is commonly used for resource-constrained IoT devices?", opts:["Contiki","Microsoft Word","Adobe Illustrator","VLC Media Player"], correct:0},
+  {q:"'M2M' in the context of IoT refers to:", opts:["Machine to Machine communication","Mobile to Mobile calls only","Manual to Machine transfer","Memory to Memory copy"], correct:0},
+  {q:"An Analog-to-Digital Converter (ADC) in a sensor node is used to:", opts:["Convert analog sensor signals into digital data","Convert digital data into sound","Store data permanently","Generate electrical power"], correct:0},
+  {q:"Typical smart city IoT applications include:", opts:["Smart traffic and waste management","Only home entertainment systems","Only mobile gaming","Only print media distribution"], correct:0},
+  {q:"Which protocol is designed to be similar to HTTP but optimized for constrained devices, running over UDP?", opts:["CoAP","FTP","IMAP","SMTP"], correct:0},
+  {q:"Which of the following best captures a defining characteristic of IoT devices?", opts:["Interconnectivity and data exchange between devices","Complete isolation from all networks","Absence of any sensing capability","No requirement for power"], correct:0},
+  {q:"A 'digital twin' in IoT refers to:", opts:["A virtual replica of a physical device or system","A backup battery pack","A type of wireless antenna","A programming language"], correct:0},
+  {q:"Which of the following is a publish-subscribe based IoT protocol using topics and brokers?", opts:["MQTT","FTP","Telnet","SMTP"], correct:0},
+  {q:"XMPP, when used in IoT, is primarily valued for:", opts:["Real-time messaging with presence information","Bulk file transfer only","Video rendering only","Hardware manufacturing"], correct:0},
+  {q:"AMQP is primarily designed for:", opts:["Reliable queuing and message-oriented middleware","Web page rendering","Image compression","GPS positioning"], correct:0},
+  {q:"Which of the following IoT communication models involves a device publishing data that many subscribers can receive?", opts:["Publish-Subscribe model","Device-to-Device model only","Request-Response model only","Peer-to-Peer model only"], correct:0},
+  {q:"In the IoT Device-to-Cloud communication model, devices typically communicate directly with:", opts:["An application service provider in the cloud","Only nearby peer devices","Only local storage","A print server"], correct:0},
+  {q:"Which of the following best describes 'Industrial IoT' (IIoT)?", opts:["Application of IoT technologies in industrial and manufacturing settings","IoT used only for home entertainment","IoT used only in agriculture","IoT used only for wearables"], correct:0},
+  {q:"'Industry 4.0' is closely associated with which of the following concepts?", opts:["Cyber-physical systems and smart manufacturing","Manual assembly lines only","Steam-powered machinery","Telegraph-based communication"], correct:0},
+  {q:"Which of the following sensors is commonly used to measure ambient temperature in IoT systems?", opts:["Thermistor/DHT sensor","Accelerometer","Gyroscope","LDR"], correct:0},
+  {q:"An accelerometer sensor is primarily used to measure:", opts:["Motion and orientation changes","Ambient light intensity","Soil moisture","Sound frequency"], correct:0},
+  {q:"In smart agriculture, IoT sensors are commonly used to monitor:", opts:["Soil moisture and temperature","Stock market indices","Social media engagement","Movie ratings"], correct:0},
+  {q:"A key benefit of using cloud computing in IoT systems is:", opts:["Scalable storage and processing for large sensor data volumes","Elimination of the need for any sensors","Guaranteed zero latency always","Removal of the need for internet connectivity"], correct:0},
+  {q:"Which of the following best describes the 'Semantic Web of Things'?", opts:["Adding semantic meaning/metadata to IoT data for better interoperability","A network exclusively for social media","A hardware manufacturing standard","A type of power supply unit"], correct:0},
+  {q:"Which network topology in WSNs allows data to hop through multiple intermediate nodes to reach the destination?", opts:["Mesh topology","Point-to-point only","Isolated topology","No topology"], correct:0},
+  {q:"Which of the following is a key motivation for using low-power protocols in IoT devices?", opts:["Many IoT devices run on limited battery power","IoT devices always have unlimited power","Low-power protocols are always faster","Power consumption is irrelevant in IoT"], correct:0},
+  {q:"A 'sensor node' in a WSN typically includes which of the following components?", opts:["Sensing unit, processing unit, transceiver and power source","Only a keyboard and monitor","Only a printer","Only a hard disk drive"], correct:0},
+  {q:"Which of the following best describes 'Data Fusion' in IoT systems?", opts:["Combining data from multiple sensors to produce more reliable information","Deleting duplicate files from a hard disk","Compressing video files","Formatting a storage device"], correct:0},
+  {q:"Which of the following IoT protocols uses a broker-based architecture to route messages between devices?", opts:["MQTT","HTTP GET requests only","FTP","Telnet"], correct:0},
+  {q:"In the context of IoT security, 'authentication' primarily ensures:", opts:["That a device or user is verified as genuine before access is granted","That data is always compressed","That all devices use the same color scheme","That devices never connect to the internet"], correct:0},
+  {q:"Which of the following best represents a typical smart home IoT use case?", opts:["Automated lighting and temperature control based on occupancy","Manual switching of all appliances only","Paper-based utility bill tracking","Postal mail sorting"], correct:0},
+  {q:"DDS (Data Distribution Service) in IoT is primarily used for:", opts:["Real-time, high-performance machine-to-machine data exchange","Only static webpage hosting","Only email delivery","Only PDF generation"], correct:0},
+  {q:"Which of the following best describes 'Web of Things' (WoT)?", opts:["Using web standards to make IoT devices and data accessible over the web","A physical network cable standard","A type of power adapter","A database indexing technique"], correct:0},
+  {q:"Which of the following is generally considered a benefit of using IPv6 in large-scale IoT deployments?", opts:["A vastly larger address space to accommodate billions of devices","Reduced need for any addressing scheme","Elimination of routing altogether","Guaranteed unlimited bandwidth"], correct:0},
+  {q:"Which of the following best describes a 'passive' RFID tag?", opts:["A tag that has no internal power source and is powered by the reader's signal","A tag with its own battery and long transmission range","A tag that can only be used once","A tag that requires no reader at all"], correct:0},
+  {q:"Which country is commonly cited as an early and widespread adopter of FeliCa contactless smart card technology?", opts:["Japan","Brazil","Canada","Germany"], correct:0},
+  {q:"Channel blacklisting in wireless sensor networks is used primarily to:", opts:["Avoid using frequency channels affected by interference","Increase the physical size of a node","Reduce the number of sensors deployed","Disable encryption on the network"], correct:0},
+  {q:"In IoT network management, the 'network manager' component is primarily responsible for:", opts:["Supervising nodes and guiding when/where they send packets","Manufacturing sensor hardware","Designing the user interface","Printing network diagrams"], correct:0},
+  {q:"Which of the following best describes a Vehicular Ad-hoc Network (VANET) in IoT?", opts:["A network formed dynamically between moving vehicles for communication","A wired network inside a single building","A static network of home appliances","A satellite-only communication link"], correct:0},
+  {q:"V2X communication in the context of connected vehicles refers to:", opts:["Vehicle-to-everything communication (other vehicles, infrastructure, etc.)","Vehicle-to-vinyl audio recording","Video-to-Xerox document conversion","Only vehicle-to-radio communication"], correct:0},
+  {q:"Which of the following best describes a Home Area Network (HAN) architecture in IoT?", opts:["A local network connecting smart devices and appliances within a home","A network spanning multiple countries","A network used only for gaming consoles","A network exclusive to industrial factories"], correct:0}
+];
+
+function shuffleArray(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* ============ Firebase REST-based storage helper ============ */
+/* Mirrors the same get/set/list interface used before, but talks to
+   the Firebase Realtime Database REST API so it works on GitHub Pages. */
+const dbStorage = {
+  async set(key, value){
+    const res = await fetch(FIREBASE_DB_URL + "/attempts/" + encodeURIComponent(key) + ".json", {
+      method: "PUT",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(value)
+    });
+    if(!res.ok) throw new Error("Firebase write failed");
+    return res.json();
+  },
+  async get(key){
+    const res = await fetch(FIREBASE_DB_URL + "/attempts/" + encodeURIComponent(key) + ".json");
+    if(!res.ok) throw new Error("Firebase read failed");
+    const data = await res.json();
+    return data; // null if not found
+  },
+  async listAll(){
+    const res = await fetch(FIREBASE_DB_URL + "/attempts.json");
+    if(!res.ok) throw new Error("Firebase list failed");
+    const data = await res.json();
+    if(!data) return [];
+    return Object.values(data);
+  }
+};
+/* =============================================================== */
+
+let QUESTIONS = [];
+let studentName = "";
+let currentQ = 0;
+let answers = [];
+let timerInterval = null;
+let timeLeft = 0;
+let examStartTime = 0;
+
+function show(id){
+  ["screen-passcode","screen-name","screen-exam","screen-result","screen-leaderboard"].forEach(s=>{
+    document.getElementById(s).classList.toggle("hidden", s!==id);
+  });
+}
+
+function checkPasscode(){
+  const val = document.getElementById("passcodeInput").value.trim();
+  if(val === PASSCODE){
+    show("screen-name");
+  } else {
+    document.getElementById("passErr").textContent = "Incorrect passcode. Please try again.";
+  }
+}
+
+async function startExam(){
+  const name = document.getElementById("nameInput").value.trim();
+  if(!name){
+    document.getElementById("nameErr").textContent = "Please enter your name.";
+    return;
+  }
+  try{
+    const existing = await dbStorage.get(name.toLowerCase());
+    if(existing){
+      document.getElementById("nameErr").textContent = "This name has already started/submitted the exam. Please use a different name (e.g. add roll number).";
+      return;
+    }
+  }catch(e){
+    document.getElementById("nameErr").textContent = "Could not connect to the server. Check your internet connection and try again.";
+    console.error(e);
+    return;
+  }
+
+  studentName = name;
+  QUESTIONS = shuffleArray(QUESTION_POOL).slice(0, QUESTIONS_PER_ATTEMPT);
+  answers = new Array(QUESTIONS.length).fill(null);
+  currentQ = 0;
+  examStartTime = Date.now();
+
+  try{
+    await dbStorage.set(name.toLowerCase(), {
+      name: name,
+      status: 'started',
+      startedAt: Date.now()
+    });
+  }catch(e){ console.error("could not mark started", e); }
+
+  show("screen-exam");
+  renderQuestion();
+  startTimer();
+}
+
+function startTimer(){
+  timeLeft = QUESTIONS.length * SECONDS_PER_QUESTION;
+  updateTimerDisplay();
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft <= 0){
+      clearInterval(timerInterval);
+      submitExam();
+    }
+  },1000);
+}
+
+function updateTimerDisplay(){
+  const m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+  const s = (timeLeft%60).toString().padStart(2,'0');
+  document.getElementById("timerDisplay").textContent = m+":"+s;
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[currentQ];
+  document.getElementById("qCounter").textContent = "Question " + (currentQ+1) + " / " + QUESTIONS.length;
+  document.getElementById("progressFill").style.width = ((currentQ)/QUESTIONS.length*100) + "%";
+  const area = document.getElementById("questionArea");
+  area.innerHTML = "";
+  const qDiv = document.createElement("div");
+  qDiv.className = "q";
+  const title = document.createElement("div");
+  title.className = "q-title";
+  title.textContent = (currentQ+1) + ". " + q.q;
+  qDiv.appendChild(title);
+  q.opts.forEach((opt,i)=>{
+    const optDiv = document.createElement("div");
+    optDiv.className = "opt" + (answers[currentQ]===i ? " selected" : "");
+    optDiv.textContent = opt;
+    optDiv.onclick = ()=>{
+      answers[currentQ] = i;
+      renderQuestion();
+    };
+    qDiv.appendChild(optDiv);
+  });
+  area.appendChild(qDiv);
+  document.getElementById("nextBtn").textContent = (currentQ===QUESTIONS.length-1) ? "Submit Exam" : "Next";
+}
+
+function nextQuestion(){
+  if(currentQ < QUESTIONS.length - 1){
+    currentQ++;
+    renderQuestion();
+  } else {
+    clearInterval(timerInterval);
+    submitExam();
+  }
+}
+
+async function submitExam(){
+  let score = 0;
+  QUESTIONS.forEach((q,i)=>{ if(answers[i]===q.correct) score++; });
+  const timeTakenSec = Math.round((Date.now()-examStartTime)/1000);
+
+  document.getElementById("finalScore").textContent = score + "/" + QUESTIONS.length;
+  document.getElementById("finalPercent").textContent = Math.round(score/QUESTIONS.length*100) + "% score — Name: " + studentName;
+  show("screen-result");
+
+  try{
+    await dbStorage.set(studentName.toLowerCase(), {
+      name: studentName,
+      status: 'completed',
+      score: score,
+      total: QUESTIONS.length,
+      timeTakenSec: timeTakenSec,
+      submittedAt: Date.now()
+    });
+  }catch(e){
+    console.error("Could not save result", e);
+  }
+
+  setTimeout(()=>{
+    show("screen-leaderboard");
+    loadLeaderboard();
+  }, 2000);
+}
+
+async function loadLeaderboard(){
+  const loadingEl = document.getElementById("lbLoading");
+  loadingEl.classList.remove("hidden");
+  try{
+    const all = await dbStorage.listAll();
+
+    const completed = all.filter(a => a.status === 'completed');
+    const pending = all.filter(a => a.status !== 'completed');
+
+    document.getElementById("statStarted").textContent = all.length;
+    document.getElementById("statCompleted").textContent = completed.length;
+    document.getElementById("statPending").textContent = pending.length;
+
+    const pendingBox = document.getElementById("pendingBox");
+    if(pending.length > 0){
+      pendingBox.classList.remove("hidden");
+      document.getElementById("pendingNames").textContent = pending.map(p=>p.name).join(", ");
+    } else {
+      pendingBox.classList.add("hidden");
+    }
+
+    completed.sort((a,b)=> b.score - a.score || a.timeTakenSec - b.timeTakenSec);
+
+    const podiumArea = document.getElementById("podiumArea");
+    podiumArea.innerHTML = "";
+    if(completed.length > 0){
+      const podium = document.createElement("div");
+      podium.className = "podium";
+      const top3 = completed.slice(0,3);
+      const classes = ["p1","p2","p3"];
+      const medals = ["1st","2nd","3rd"];
+      top3.forEach((r,i)=>{
+        const pod = document.createElement("div");
+        pod.className = "pod " + classes[i];
+        pod.innerHTML = "<div style='font-size:14px;'>"+medals[i]+"</div><div class='name'>"+escapeHtml(r.name)+"</div><div class='pts'>"+r.score+"/"+r.total+"</div>";
+        podium.appendChild(pod);
+      });
+      podiumArea.appendChild(podium);
+    }
+
+    const tbody = document.getElementById("lbBody");
+    tbody.innerHTML = "";
+    completed.forEach((r,i)=>{
+      const tr = document.createElement("tr");
+      if(r.name === studentName) tr.className = "you";
+      const rankLabel = i===0?"1st":i===1?"2nd":i===2?"3rd":(i+1)+"th";
+      const mins = Math.floor(r.timeTakenSec/60);
+      const secs = r.timeTakenSec%60;
+      tr.innerHTML = "<td class='rank-cell'>"+rankLabel+"</td><td>"+escapeHtml(r.name)+(r.name===studentName?" (You)":"")+"</td><td>"+r.score+"/"+r.total+"</td><td>"+mins+"m "+secs+"s</td>";
+      tbody.appendChild(tr);
+    });
+  }catch(e){
+    console.error("leaderboard load failed", e);
+    const podiumArea = document.getElementById("podiumArea");
+    podiumArea.innerHTML = "<div class='conn-warn'>Could not load leaderboard. Check your internet connection and press Refresh.</div>";
+  }
+  loadingEl.classList.add("hidden");
+}
+
+function escapeHtml(str){
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>
